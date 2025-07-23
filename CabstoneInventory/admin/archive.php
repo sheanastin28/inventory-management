@@ -8,8 +8,8 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <title>Archived Users</title>
-    <link rel="stylesheet" href="/lib/css/style.css"> <!-- Assuming shared styles -->
-    <link rel="stylesheet" href="/lib/css/modal.css"> <!-- Optional -->
+    <link rel="stylesheet" href="../lib/css/style.css"> <!-- Assuming shared styles -->
+    <link rel="stylesheet" href="../lib/css/modal.css"> <!-- Optional -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
