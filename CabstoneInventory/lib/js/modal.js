@@ -57,7 +57,7 @@ function openEditModal(userId, fullname, username, role) {
 
 function openArchiveModal(userId) {
     document.getElementById('archiveUserId').value = userId;
-    document.getElementById('archiveModal').style.display = 'block';
+    document.getElementById('archiveModal').style.display = 'flex';
 }
 
 function showSuccessModal() {
