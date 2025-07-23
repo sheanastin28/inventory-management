@@ -161,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="right-panel">
       <div class="logo">
-        <img src="../.assets/lightlogo.png" alt="Logo" />
+        <img src="../assets/lightlogo.png" alt="Logo" />
       </div>
       <form method="POST">
         <h2>Login</h2>

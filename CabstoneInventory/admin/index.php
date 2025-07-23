@@ -70,7 +70,7 @@ if (isset($_POST['lgin'])) {
 <body>
     <div class="login-container">
         <div class="logo">
-            <img src="/.assets/logo.png" alt="Logo">
+            <img src="../assets/logo.png" alt="Logo">
             <h2>Cabstone Inventory System</h2>
         </div>
         <!-- Log In Form -->

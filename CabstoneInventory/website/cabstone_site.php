@@ -35,7 +35,7 @@ include '../lib/db/db.php';
         </a>
       </div>
       <div class="hidden md:block md:w-1/2 p-4">
-        <img src="../.assets/kitchen.jpg" alt="Modular Cabinets" class="rounded-lg shadow-xl max-w-full h-auto">
+        <img src="../assets/kitchen.jpg" alt="Modular Cabinets" class="rounded-lg shadow-xl max-w-full h-auto">
       </div>
     </div>
   </header>

@@ -4,7 +4,7 @@
 
 <div class="sidebar">
     <div class="logo">
-        <img src="/assets/lightlogo.png" alt="Logo">
+        <img src="../assets/lightlogo.png" alt="Logo">
     </div>
     <ul>
         <li><a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
