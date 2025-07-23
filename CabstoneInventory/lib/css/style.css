@@ -1,0 +1,498 @@
+/* Base page styling */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    background-color: #f4f4f9;
+    padding: 0;
+}
+
+/* Sidebar styling */
+.sidebar {
+    width: 220px;
+    background: #10162F;
+    height: 100vh;
+    color: #fff;
+    padding-top: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.sidebar img {
+    width: 70px;
+    height: 70px;
+}
+
+.logo {
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    padding: 15px 20px;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background: #1e2a45;
+    border-radius: 5px;
+}
+
+/* Header bar (top) */
+.header {
+    position: fixed;
+    top: 0;
+    left: 220px;
+    right: 0;
+    height: 56px;
+    background: #10162F;
+    color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 900;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* User dropdown container */
+.user-dropdown {
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+/* User info text and icon */
+.user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.user i {
+    font-size: 1.2rem;
+}
+
+/* Dropdown menu (initially hidden) */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    color: #000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 999;
+    min-width: 140px;
+}
+
+/* Show menu on hover */
+.user-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Links in dropdown */
+.dropdown-menu a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Form (reset spacing) */
+.dropdown-menu form {
+    margin: 0;
+}
+
+/* Logout button styled like a link */
+.dropdown-menu button {
+    width: 100%;
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 14px;
+    font-family: inherit;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Hover effect for both links and buttons */
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+
+/* Main content offset */
+.main-content,
+.container-fluid {
+    margin-left: 220px;
+    margin-top: 56px;
+    padding: 20px;
+    width: calc(100% - 220px);
+    box-sizing: border-box;
+}
+
+.col-md-4-scroll {
+    max-height: 75vh; /* or adjust as needed */
+    overflow-y: auto;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+/* Hide scrollbars */
+.col-md-4-scroll::-webkit-scrollbar {
+    display: none;
+}
+.col-md-4-scroll {
+    -ms-overflow-style: none;  /* IE 10+ */
+    scrollbar-width: none;     /* Firefox */
+}
+
+
+
+/* Stats section */
+.stats {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.stat-box {
+    flex: 1;
+    padding: 20px;
+    color: #fff;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-box i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.red { background: #f44336; }
+.purple { background: #9c27b0; }
+.blue { background: #2196f3; }
+.yellow { background: #ffeb3b; color: #000; }
+
+/* Table layout */
+.tables {
+    display: flex;
+    margin-top: 30px;
+    gap: 20px;
+}
+
+.table-box {
+    flex: 1;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.table-box h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+/* Card appearance */
+.card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    height: 100%;
+}
+
+/* Form controls inside cards */
+.card input[type="text"],
+.card textarea,
+.card select,
+.card input[type="file"] {
+    font-size: 14px;
+}
+
+.card button {
+    font-size: 14px;
+}
+
+/* Table styling */
+table, .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+table th, table td,
+.table th, .table td {
+    vertical-align: top;
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.table th, table th {
+    background-color: #f8f9fa;
+}
+
+/* Image thumbnails */
+.img-thumbnail {
+    max-width: 60px;
+    height: auto;
+    border-radius: 4px;
+}
+
+/* Modal styles */
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.modal-body input,
+.modal-body textarea,
+.modal-body select {
+    font-size: 14px;
+}
+
+#addImagePreview,
+#editImagePreview {
+    width: 100px;
+    display: none;
+    border-radius: 4px;
+    object-fit: cover;
+    margin-top: 10px;
+}
+
+.btn-link {
+    padding: 0;
+    font-size: 14px;
+}
+
+.text-danger {
+    font-weight: 500;
+}
+
+.table tbody tr:hover,
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Product layout */
+.product {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0;
+}
+
+/* User management */
+.user-table-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.user-table-box h3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.add-user-btn {
+    background: #2196f3;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.add-user-btn:hover {
+    background: #1976d2;
+}
+
+.action-icon {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+/* Inventory layout */
+.container-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.box {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    min-width: 350px;
+    flex: 1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+}
+
+/* Form elements */
+input[type="text"],
+input[type="number"] {
+    width: 90%;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 8px 15px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    margin-top: 10px;
+}
+
+table, th, td {
+    border: 1px solid #aaa;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+.actions button {
+    margin-right: 5px;
+    padding: 5px 10px;
+    font-size: 13px;
+    color: #fff;
+}
+
+.btn-view   { background-color: #28a745; }
+.btn-edit   { background-color: #fd7e14; }
+.btn-delete { background-color: #dc3545; }
+
+/* Modal background */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 1050;
+}
+
+.modal.active {
+    display: block;
+}
+
+.modal-content {
+    background: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    width: 80%;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+}
+
+.add-raw-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.popup-form {
+    display: none;
+    padding: 15px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+
+.popup-form input {
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 5px 8px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 767.98px) {
+    .container-fluid,
+    .main-content {
+        margin-left: 0;
+        margin-top: 56px;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+
+    #addImagePreview,
+    #editImagePreview {
+        width: 100%;
+    }
+
+    .stats,
+    .tables {
+        flex-direction: column;
+    }
+
+    .header {
+        left: 0;
+        width: 100%;
+    }
+}
