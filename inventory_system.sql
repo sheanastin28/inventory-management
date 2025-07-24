@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 23, 2025 at 01:30 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Jul 24, 2025 at 06:03 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.1.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -103,6 +103,7 @@ CREATE TABLE `inquire` (
   `height` varchar(20) NOT NULL,
   `budget` int(6) NOT NULL,
   `query` text NOT NULL,
+  `date` date DEFAULT NULL,
   `user_id` varchar(10) DEFAULT NULL,
   `product_id` varchar(10) DEFAULT NULL,
   `status` enum('Pending','Accept','Decline') DEFAULT 'Pending'
@@ -112,9 +113,10 @@ CREATE TABLE `inquire` (
 -- Dumping data for table `inquire`
 --
 
-INSERT INTO `inquire` (`inq_id`, `email`, `cont_no`, `name`, `address`, `com_method`, `length`, `width`, `height`, `budget`, `query`, `user_id`, `product_id`, `status`) VALUES
-('INQ-000001', 'hazelannpimentel02@gmail.com', '09658326545', 'Hazel Ann Pimentel', 'G/F Barangay Hall F. Mariano Ave., Cor., Comfrey Lane', 'Viber', '12', '12', '12', 15000, 'hbad sjal safoaiba akd[ak', 'UI-000002', 'PDT-0001', 'Accept'),
-('INQ-000002', 'jake_sim@gmail.com', '09081124211', 'Jake Sim', '24 PMA St., Marikina City', 'Messenger', '15', '15', '15', 50000, 'White Color of doors and black to it\'s body', 'UI-000003', 'PDT-0001', 'Pending');
+INSERT INTO `inquire` (`inq_id`, `email`, `cont_no`, `name`, `address`, `com_method`, `length`, `width`, `height`, `budget`, `query`, `date`, `user_id`, `product_id`, `status`) VALUES
+('INQ-000001', 'hazelannpimentel02@gmail.com', '09658326545', 'Hazel Ann Pimentel', 'G/F Barangay Hall F. Mariano Ave., Cor., Comfrey Lane', 'Viber', '12', '12', '12', 15000, 'hbad sjal safoaiba akd[ak', '2025-07-23', 'UI-000002', 'PDT-0001', 'Accept'),
+('INQ-000002', 'jake_sim@gmail.com', '09081124211', 'Jake Sim', '24 PMA St., Marikina City', 'Messenger', '15', '15', '15', 50000, 'White Color of doors and black to it\'s body', '2025-07-23', 'UI-000003', 'PDT-0001', 'Pending'),
+('INQ-000003', 'hazelannpimentel02@gmail.com', '09653286542', 'Hazel Ann Pimentel', '162 Mejia St. Pinagbuhatan Pasig City', 'Messenger', '15', '12', '20', 15000, 'daefrgthyjkhjgfvbn vj', '2025-07-24', 'UI-000002', 'PDT-0002', 'Pending');
 
 --
 -- Triggers `inquire`
@@ -231,6 +233,7 @@ CREATE TABLE `raw_material` (
   `material` varchar(100) NOT NULL,
   `quantity` int(11) NOT NULL,
   `price` decimal(11,2) NOT NULL,
+  `threshold` int(5) NOT NULL,
   `category_id` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -238,9 +241,9 @@ CREATE TABLE `raw_material` (
 -- Dumping data for table `raw_material`
 --
 
-INSERT INTO `raw_material` (`material_id`, `material`, `quantity`, `price`, `category_id`) VALUES
-('RM-0001', 'Marine 18mm 4\'x8\' DF white carcass', 300, 120.00, 'CTY-002'),
-('RM-0002', '6X2 black screw', 300, 50.00, 'CTY-001');
+INSERT INTO `raw_material` (`material_id`, `material`, `quantity`, `price`, `threshold`, `category_id`) VALUES
+('RM-0001', 'Marine 18mm 4\'x8\' DF white carcass', 300, 120.00, 50, 'CTY-002'),
+('RM-0002', '6X2 black screw', 300, 50.00, 50, 'CTY-001');
 
 --
 -- Triggers `raw_material`
