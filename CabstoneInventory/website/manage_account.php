@@ -1,12 +1,16 @@
 <?php
 session_start();
+
+// Database connection
 $host = "localhost";
 $user = "root";
 $pass = "";
 $db = "inventory_system";
 
 $conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 // Ensure user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -17,7 +21,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $message = "";
 
-// Update profile info
+// ✅ Update profile info
 if (isset($_POST['update_info'])) {
     $name = $_POST['name'];
     $email = $_POST['email'];
@@ -35,7 +39,7 @@ if (isset($_POST['update_info'])) {
     $stmt->close();
 }
 
-// Change password
+// ✅ Change password
 if (isset($_POST['change_password'])) {
     $current = $_POST['current_password'];
     $newpass = $_POST['new_password'];
@@ -54,25 +58,34 @@ if (isset($_POST['change_password'])) {
             $update = $conn->prepare("UPDATE user SET password = ? WHERE user_id = ?");
             $update->bind_param("ss", $new_hashed, $user_id);
             if ($update->execute()) {
-                $message = "✅ Password changed successfully.";
+                $message = "Password changed successfully.";
             } else {
-                $message = "❌ Failed to change password.";
+                $message = "Failed to change password.";
             }
             $update->close();
         } else {
-            $message = "⚠️ New passwords do not match.";
+            $message = "New passwords do not match.";
         }
     } else {
-        $message = "⚠️ Current password is incorrect.";
+        $message = "Current password is incorrect.";
     }
 }
 
-// Fetch user info
+// ✅ Fetch user info (after update so latest data shows)
 $stmt = $conn->prepare("SELECT name, email, cont_num, address FROM user WHERE user_id = ?");
 $stmt->bind_param("s", $user_id);
 $stmt->execute();
-$stmt->bind_result($name, $email, $cont_num, $address);
-$stmt->fetch();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $name = $row['name'];
+    $email = $row['email'];
+    $cont_num = $row['cont_num'];
+    $address = $row['address'];
+} else {
+    $name = $email = $cont_num = $address = '';
+}
 $stmt->close();
 $conn->close();
 ?>
@@ -89,9 +102,9 @@ $conn->close();
     <div class="max-w-5xl mx-auto bg-white p-6 mt-8 shadow-xl rounded-lg">
         <h2 class="text-xl font-bold mb-4 text-gray-700 text-center">Manage Account</h2>
 
-        <?php if ($message): ?>
-            <div class="mb-4 text-center text-white px-3 py-2 rounded text-xs <?= strpos($message, '✅') !== false ? 'bg-green-500 shadow-md' : 'bg-red-500 shadow-md' ?>">
-                <?= htmlspecialchars($message) ?>
+        <?php if (!empty($message)): ?>
+            <div class="mb-4 text-center text-white px-3 py-2 rounded text-xs <?php echo (strpos($message, '✅') !== false) ? 'bg-green-500 shadow-md' : 'bg-red-500 shadow-md'; ?>">
+                <?php echo htmlspecialchars($message); ?>
             </div>
         <?php endif; ?>
 
@@ -102,19 +115,19 @@ $conn->close();
                 <form method="POST" class="space-y-3">
                     <div>
                         <label class="block text-gray-600 text-xs mb-1">Name</label>
-                        <input type="text" name="name" value="<?= htmlspecialchars($name) ?>" class="w-full p-2 border rounded text-xs focus:ring-1 focus:ring-blue-400 shadow-sm" required>
+                        <input type="text" name="name" value="<?php echo htmlspecialchars($name); ?>" class="w-full p-2 border rounded text-xs focus:ring-1 focus:ring-blue-400 shadow-sm" required>
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs mb-1">Email</label>
-                        <input type="email" name="email" value="<?= htmlspecialchars($email) ?>" class="w-full p-2 border rounded text-xs focus:ring-1 focus:ring-blue-400 shadow-sm" required>
+                        <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>" class="w-full p-2 border rounded text-xs focus:ring-1 focus:ring-blue-400 shadow-sm" required>
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs mb-1">Contact Number</label>
-                        <input type="text" name="cont_num" value="<?= htmlspecialchars($cont_num) ?>" class="w-full p-2 border rounded text-xs focus:ring-1 focus:ring-blue-400 shadow-sm" required>
+                        <input type="text" name="cont_num" value="<?php echo htmlspecialchars($cont_num); ?>" class="w-full p-2 border rounded text-xs focus:ring-1 focus:ring-blue-400 shadow-sm" required>
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs mb-1">Address</label>
-                        <textarea name="address" class="w-full p-2 border rounded text-xs focus:ring-1 focus:ring-blue-400 shadow-sm" required><?= htmlspecialchars($address) ?></textarea>
+                        <textarea name="address" class="w-full p-2 border rounded text-xs focus:ring-1 focus:ring-blue-400 shadow-sm" required><?php echo htmlspecialchars($address); ?></textarea>
                     </div>
                     <button type="submit" name="update_info" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full text-xs font-semibold shadow-md">Update Info</button>
                 </form>

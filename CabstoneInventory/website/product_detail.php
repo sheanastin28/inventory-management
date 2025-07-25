@@ -40,10 +40,12 @@ $user_id = $isLoggedIn ? $_SESSION['user_id'] : null;
 
 $userEmail = "";
 $userName = "";
+$userAddress = "";
+$userContact = "";
 
 // If logged in, fetch user info
 if ($isLoggedIn) {
-    $stmtUser = $conn->prepare("SELECT email, name FROM user WHERE user_id = ?");
+    $stmtUser = $conn->prepare("SELECT email, name, address, cont_num FROM user WHERE user_id = ?");
     $stmtUser->bind_param("s", $user_id);
     $stmtUser->execute();
     $resultUser = $stmtUser->get_result();
@@ -51,6 +53,8 @@ if ($isLoggedIn) {
         $userData = $resultUser->fetch_assoc();
         $userEmail = htmlspecialchars($userData['email']);
         $userName = htmlspecialchars($userData['name']);
+        $userAddress = htmlspecialchars($userData['address']);
+        $userContact = htmlspecialchars($userData['cont_num']);
     }
     $stmtUser->close();
 }
@@ -62,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["inquire_submit"]) && 
     $email = $_POST['email'];
     $name = $_POST['name'];
     $address = $_POST['address'];
-    $cont_no = $_POST['cont_no'];
+    $cont_no = $_POST['cont_num'];
     $method = $_POST['com_method'];
     $length = $_POST['length'];
     $width = $_POST['width'];
@@ -70,13 +74,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["inquire_submit"]) && 
     $budget = $_POST['budget'];
     $query = $_POST['query'];
 
-    // Insert inquiry with date
-    $stmt = $conn->prepare("INSERT INTO inquire (email, cont_no, name, address, com_method, length, width, height, budget, query, user_id, product_id, date)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-    $stmt->bind_param("ssssssssssss", $email, $cont_no, $name, $address, $method, $length, $width, $height, $budget, $query, $user_id, $product_id);
+    // Default track_id
+    $defaultTrackId = 'TRK-0001'; // Ensure this exists in 'track' table
+
+    // Insert inquiry
+    $stmt = $conn->prepare("INSERT INTO inquire (email, cont_num, name, address, com_method, length, width, height, budget, query, user_id, product_id, track_id, date)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param(
+        "sssssssssssss",
+        $email,
+        $cont_no,
+        $name,
+        $address,
+        $method,
+        $length,
+        $width,
+        $height,
+        $budget,
+        $query,
+        $user_id,
+        $product_id,
+        $defaultTrackId
+    );
 
     if ($stmt->execute()) {
         $showSuccessModal = true;
+    } else {
+        error_log("Inquiry Insert Error: " . $stmt->error);
     }
     $stmt->close();
 }
@@ -100,6 +124,57 @@ $finfo = extension_loaded('fileinfo') ? new finfo(FILEINFO_MIME_TYPE) : null;
   .image-gallery { display: flex; overflow-x: scroll; scroll-snap-type: x mandatory; }
   .image-gallery img { scroll-snap-align: start; min-width: 100%; height: auto; object-fit: contain; }
   .modal-bg { background-color: rgba(0,0,0,0.5); }
+  /* Compact Modal Form Styling */
+#modal .bg-blue-200 {
+    font-size: 13px;
+    padding: 15px;
+}
+
+#modal h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+#modal input[type="text"],
+#modal input[type="email"],
+#modal select,
+#modal textarea {
+    font-size: 13px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+}
+
+#modal .space-y-3 > * {
+    margin-bottom: 6px;
+}
+
+#modal .grid input {
+    font-size: 13px;
+    padding: 6px;
+}
+
+#modal label,
+#modal .font-semibold {
+    font-size: 12px;
+}
+
+#modal .mt-4 button {
+    font-size: 13px;
+    padding: 6px 14px;
+}
+
+#modal .bg-blue-200 {
+    max-width: 600px;
+}
+
+#modal textarea {
+    padding: 6px 8px;
+    font-size: 13px;
+}
+
+#modal .mt-4 {
+    margin-top: 10px;
+}
 </style>
 </head>
 <body class="text-gray-800">
@@ -154,8 +229,8 @@ $finfo = extension_loaded('fileinfo') ? new finfo(FILEINFO_MIME_TYPE) : null;
       <div class="space-y-3">
         <input type="email" name="email" value="<?= $userEmail ?>" placeholder="Email" class="w-full px-2 py-1 rounded" readonly>
         <input type="text" name="name" value="<?= $userName ?>" placeholder="Name" class="w-full px-2 py-1 rounded" readonly>
-        <input type="text" name="address" placeholder="Address" class="w-full px-2 py-1 rounded" required>
-        <input type="text" name="cont_no" placeholder="Contact Number" class="w-full px-2 py-1 rounded" required>
+        <input type="text" name="address" value="<?= $userAddress ?>" placeholder="Address" class="w-full px-2 py-1 rounded" required>
+        <input type="text" name="cont_num" value="<?= $userContact ?>" placeholder="Contact Number" class="w-full px-2 py-1 rounded" required>
         <div class="flex flex-col sm:flex-row sm:items-center gap-2">
           <label>Preferred method of contact:</label>
           <select name="com_method" class="flex-1 px-4 py-1 rounded" required>

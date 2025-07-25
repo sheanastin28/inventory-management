@@ -2,14 +2,21 @@
 session_start();
 include '../lib/db/db.php';
 
-// Handle status update
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['inq_id']) && isset($_POST['status'])) {
+// Handle approve/decline action
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['inq_id']) && isset($_POST['action'])) {
     $inq_id = $_POST['inq_id'];
-    $status = $_POST['status'];
+    $action = $_POST['action'];
 
-    if (in_array($status, ['Pending', 'Accept', 'Decline'])) {
-        $stmt = $conn->prepare("UPDATE inquire SET status = ? WHERE inq_id = ?");
-        $stmt->bind_param("ss", $status, $inq_id);
+    // Map actions to track_id
+    $trackMap = [
+        'approve' => 'TRK-0003', // Approved
+        'decline' => 'TRK-0002'  // Declined
+    ];
+
+    if (isset($trackMap[$action])) {
+        $newTrackId = $trackMap[$action];
+        $stmt = $conn->prepare("UPDATE inquire SET track_id = ? WHERE inq_id = ?");
+        $stmt->bind_param("ss", $newTrackId, $inq_id);
         $stmt->execute();
         $stmt->close();
     }
@@ -18,15 +25,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['inq_id']) && isset($_P
     exit();
 }
 
-// ✅ Keep original field name: date
+// Fetch inquiries with track description
 $sql = "
-    SELECT 
-        i.*, 
-        p.product
-    FROM 
-        inquire i
-    LEFT JOIN 
-        product p ON i.product_id = p.product_id
+    SELECT i.*, p.product, t.track
+    FROM inquire i
+    LEFT JOIN product p ON i.product_id = p.product_id
+    LEFT JOIN track t ON i.track_id = t.track_id
+    ORDER BY i.date DESC
 ";
 $result = $conn->query($sql);
 ?>
@@ -52,18 +57,18 @@ $result = $conn->query($sql);
         .modal-content {
             background-color: #fff;
             margin: 2% auto;
-            padding: 10px 15px;
+            padding: 12px;
             border-radius: 8px;
             width: 95%;
-            max-width: 480px;
+            max-width: 450px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             animation: slideIn 0.2s ease-out;
-            max-height: 96vh;
+            max-height: 95vh;
             overflow-y: auto;
         }
         .modal-close {
             float: right;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #555;
             cursor: pointer;
@@ -71,48 +76,55 @@ $result = $conn->query($sql);
         .modal-close:hover {
             color: #000;
         }
-        .modal-content input[type="text"] {
-            width: 95%;
-            padding: 6px 8px;
-            margin-bottom: 6px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 12px;
+        .modal-content h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #222;
         }
         .modal-content label {
-            font-weight: 700;
-            font-size: 12px;
-            display: block;
-            margin-top: 6px;
+            font-size: 11px;
+            font-weight: bold;
             margin-bottom: 2px;
-            color: #333;
+            display: block;
         }
-        .modal-content h2 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: #222;
+        .modal-content input[type="text"] {
+            width: 96%;
+            padding: 5px;
+            margin-bottom: 5px;
+            font-size: 11px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
         .dimension-row {
             display: flex;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .dimension-group input {
+            width: 100%;
+            font-size: 11px;
+            padding: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-top: 8px;
         }
-        .dimension-group {
-            flex: 1;
-        }
-        .dimension-group label {
-            display: block;
+        .approve-btn, .decline-btn {
+            padding: 6px 12px;
             font-size: 12px;
-            margin-bottom: 2px;
-            color: #333;
+            border-radius: 4px;
+            border: none;
+            color: #fff;
+            cursor: pointer;
         }
-        .dimension-group input[type="text"] {
-            width: 85%;
-            padding: 6px 8px;
-            font-size: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
+        .approve-btn { background: #28a745; }
+        .approve-btn:hover { background: #218838; }
+        .decline-btn { background: #dc3545; }
+        .decline-btn:hover { background: #c82333; }
+
         @keyframes slideIn {
             from { transform: translateY(-20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
@@ -124,8 +136,8 @@ $result = $conn->query($sql);
 <?php include 'sidebar.php'; ?>
 
 <div class="main-content">
-    <?php include 'header.php';?>
-    <h2 style="text-align: left; color: #10162F; font-size: 35px;">Cabinet Inquiries</h2>
+    <?php include 'header.php'; ?>
+    <h2 style="text-align:left; color:#10162F; font-size:30px;">Cabinet Inquiries</h2>
 
     <div class="table-box">
         <table class="table">
@@ -147,20 +159,11 @@ $result = $conn->query($sql);
                             <td><?= date('M d, Y', strtotime($row['date'])) ?></td>
                             <td>
                                 <?php
-                                    $encodedData = json_encode($row, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+                                    $encodedData = htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8');
                                     echo "<button onclick='viewInquiry($encodedData)'>View</button>";
                                 ?>
                             </td>
-                            <td>
-                                <form method="post">
-                                    <input type="hidden" name="inq_id" value="<?= $row['inq_id'] ?>">
-                                    <select name="status" onchange="this.form.submit()">
-                                        <option value="Pending" <?= $row['status'] == 'Pending' ? 'selected' : '' ?>>Pending</option>
-                                        <option value="Accept" <?= $row['status'] == 'Accept' ? 'selected' : '' ?>>Accept</option>
-                                        <option value="Decline" <?= $row['status'] == 'Decline' ? 'selected' : '' ?>>Decline</option>
-                                    </select>
-                                </form>
-                            </td>
+                            <td><?= htmlspecialchars($row['track']) ?></td>
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
@@ -176,6 +179,7 @@ $result = $conn->query($sql);
     <div class="modal-content">
         <span class="modal-close" onclick="closeModal()">&times;</span>
         <h2 id="productTitle">Product Form</h2>
+        <input type="hidden" id="inq_id" value="">
 
         <label>Email</label>
         <input type="text" id="email" readonly>
@@ -213,15 +217,27 @@ $result = $conn->query($sql);
 
         <label>Additional Queries</label>
         <input type="text" id="query" readonly>
+
+        <div class="action-buttons">
+            <form method="POST">
+                <input type="hidden" name="inq_id" id="approve_inq_id">
+                <input type="hidden" name="action" value="approve">
+                <button type="submit" class="approve-btn">Approve</button>
+            </form>
+            <form method="POST">
+                <input type="hidden" name="inq_id" id="decline_inq_id">
+                <input type="hidden" name="action" value="decline">
+                <button type="submit" class="decline-btn">Decline</button>
+            </form>
+        </div>
     </div>
 </div>
 
 <script>
 function viewInquiry(data) {
     document.getElementById('productTitle').innerText = (data.product ?? "Product") + " Form";
-
-    // ✅ Use the original key: date
-    document.getElementById('inquiry_date').value = data.date || '';
+    document.getElementById('approve_inq_id').value = data.inq_id;
+    document.getElementById('decline_inq_id').value = data.inq_id;
 
     document.getElementById('email').value = data.email;
     document.getElementById('name').value = data.name;
@@ -241,8 +257,6 @@ function closeModal() {
     document.getElementById('inquiryModal').style.display = 'none';
 }
 </script>
-
-<script src="../lib/js/main.js"></script>
 
 </body>
 </html>
